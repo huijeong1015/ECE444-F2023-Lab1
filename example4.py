@@ -12,8 +12,6 @@ bootstrap = Bootstrap(app)
 def check_email(form, field):
     if not '@' in field.data:
         raise ValidationError('Please include an \'@\' in the email address. \'{:s}\' is missing an \'@\''.format(field.data))
-    if not 'utoronto' in field.data:
-        raise ValidationError('Enter U of T email address.')
 
 class Forms(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
@@ -26,12 +24,14 @@ def index():
     if forms.validate_on_submit():
         old_name = session.get('name')
         old_email = session.get('email')
-        if old_name is not None and old_name != forms.name.data:
-            flash('Looks like you have changed your name!')
         if old_email is not None and old_email != forms.email.data:
             flash('Looks like you have changed your email!')
+        if old_name is not None and old_name != forms.name.data:
+            flash('Looks like you have changed your name!')
         session['name'] = forms.name.data
         session['email'] = forms.email.data
+        if 'utoronto' not in forms.email.data:
+            session['email'] = 'Please enter U of T email'
         return redirect(url_for('index'))
     return render_template('index.html', forms=forms, name=session.get('name'), email=session.get('email'))
 
