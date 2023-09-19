@@ -25,8 +25,11 @@ def index():
     forms = Forms()
     if forms.validate_on_submit():
         old_name = session.get('name')
+        old_email = session.get('email')
         if old_name is not None and old_name != forms.name.data:
             flash('Looks like you have changed your name!')
+        if old_email is not None and old_email != forms.email.data:
+            flash('Looks like you have changed your email!')
         session['name'] = forms.name.data
         session['email'] = forms.email.data
         return redirect(url_for('index'))
